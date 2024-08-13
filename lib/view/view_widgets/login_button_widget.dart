@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mvvm_bloc/data/status.dart';
+import 'package:flutter_mvvm_bloc/view_model/login_bloc/login_bloc.dart';
 
 import '../../res/strings/app_strings.dart';
 import '../../res/widgets/round_button.dart';
-import '../../utils/utils.dart';
 
 class LoginButtonWidget extends StatelessWidget {
-  final formkey;
 
-  const LoginButtonWidget({required this.formkey, super.key});
+  final GlobalKey<FormState> formKey;
+
+  const LoginButtonWidget({ required this.formKey, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return RoundButton(
-        title: AppStrings.login,
-        loading: false,
-        onPress: () {
-          if (formkey.currentState!.validate()) {
-            print('LoginButtonWidget.build login ');
-          }
-        });
+    return BlocBuilder<LoginBloc, LoginState>(
+      buildWhen: (current,previous)=>current.status!=previous.status,
+      builder: (context, state) {
+        return RoundButton(
+            title: AppStrings.login,
+            loading: state.status == PostStatus.loading ? true : false,
+            onPress: () {
+              if (formKey.currentState!.validate()) {
+                context.read<LoginBloc>().add(const LoginApiEvent());
+              }
+            });
+      },
+    );
   }
 }

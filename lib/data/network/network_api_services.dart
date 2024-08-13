@@ -9,56 +9,83 @@ import 'base_api_services.dart';
 import 'dio_services.dart';
 
 class NetworkApiServices extends BaseApiServices {
-  final _dio = DioService().dio;
+  final Dio _dio = DioService().dio;
 
   @override
-  Future getGetApiResponse(String url) async {
-    dynamic jsonResponse;
+  Future<dynamic> getGetApiResponse(String url) async {
     try {
       final response = await _dio.get(url);
-      jsonResponse = returnJsonResponse(response);
-    }  on SocketException  {
-      throw InternetException("No Internet");
-    }  on TimeoutException  {
-      throw TimeoutException("Time Out");
-    } on DioException  {
-      throw InternetException("No Internet");
+      return _handleResponse(response);
+    } on SocketException {
+      throw InternetException("No Internet connection");
+    } on TimeoutException {
+      throw TimeoutException("Request timed out");
+    } on DioException catch (e) {
+      return _handleDioError(e);
+    } catch (e) {
+      rethrow;
     }
-    return jsonResponse;
   }
 
   @override
-  Future getPostApiResponse(String url, data) async {
+  Future<dynamic> getPostApiResponse(String url, dynamic data) async {
     if (kDebugMode) {
-      print('$data');
+      print('Request data: $data');
     }
-    dynamic jsonResponse;
+
     try {
-
       final response = await _dio.post(url, data: data);
-
-      jsonResponse = returnJsonResponse(response);
-    }  on SocketException  {
-      throw InternetException("No Internet");
-    }  on TimeoutException  {
-      throw TimeoutException("Time Out");
-    } on DioException  {
-      throw InternetException("No Internet");
+      if (kDebugMode) {
+        print('Response: $response');
+      }
+      return _handleResponse(response);
+    } on SocketException {
+      throw InternetException("No Internet connection");
+    } on TimeoutException {
+      throw TimeoutException("Request timed out");
+    } on DioException catch (e) {
+      return _handleDioError(e);
+    } catch (e) {
+      rethrow;
     }
-    return jsonResponse;
   }
-}
 
-dynamic returnJsonResponse(Response<dynamic> response) {
-  switch (response.statusCode) {
-    case 200:
-      return response.data;
-    case 400:
-      throw response.data;
-    case 401:
-      throw UnauthorizedException(response.data);
-    default:
-      throw InternetException(
-          'Error occurred while communicating with server with status code${response.statusCode}');
+  dynamic _handleResponse(Response<dynamic> response) {
+    print('Response status code: ${response.statusCode}');
+    switch (response.statusCode) {
+      case 200:
+        return response.data;
+      case 400:
+        throw BadRequestException(response.data);
+      case 401:
+        throw UnauthorizedException(response.data);
+      default:
+        throw InternetException(
+          'Error occurred while communicating with server with status code ${response.statusCode}',
+        );
+    }
+  }
+
+  dynamic _handleDioError(DioException e) {
+    if (e.response != null) {
+      // Handle specific status codes if necessary
+      print('Dio error response: ${e.response?.statusCode} ${e.response?.statusMessage}');
+      print('Dio error data: ${e.response?.data}');
+      switch (e.response?.statusCode) {
+        case 400:
+          return e.response?.data;
+        case 401:
+          throw UnauthorizedException(e.response?.data);
+      // Add more cases if needed
+        default:
+          throw InternetException(
+            'Error occurred while communicating with server with status code ${e.response?.statusCode}',
+          );
+      }
+    } else {
+      // Handle errors without response (e.g., network issues)
+      print('Dio error message: ${e.message}');
+      throw InternetException('An unknown error occurred');
+    }
   }
 }

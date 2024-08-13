@@ -1,34 +1,36 @@
-class AppExceptions implements Exception {
-  final String? _prefix, _message;
+class AppException implements Exception {
+  final String prefix;
+  final String? message;
 
-  AppExceptions([this._message, this._prefix]);
+  AppException(this.prefix, [this.message]);
 
   @override
   String toString() {
-    return "$_prefix: $_message";
+    return message == null ? prefix : '$prefix: $message';
   }
 }
 
-class InternetException extends AppExceptions {
+class InternetException extends AppException {
   InternetException([String? message])
-      : super(message, "No Internet Connection");
+      : super("No Internet Connection", message);
 }
 
-class ServerTimeOut extends AppExceptions {
-  ServerTimeOut([String? message]) : super(message, "Server Timeout");
+class ServerTimeoutException extends AppException {
+  ServerTimeoutException([String? message])
+      : super("Server Timeout", message);
 }
 
-class BadRequestException extends AppExceptions {
+class BadRequestException extends AppException {
   BadRequestException([String? message])
-      : super(message, "Bad Request Exception");
+      : super("Bad Request", message);
 }
 
-class InvalidInputException extends AppExceptions {
+class InvalidInputException extends AppException {
   InvalidInputException([String? message])
-      : super(message, "Invalid input Exception Exception");
+      : super("Invalid Input", message);
 }
 
-class UnauthorizedException extends AppExceptions {
+class UnauthorizedException extends AppException {
   UnauthorizedException([String? message])
-      : super(message, "Unauthorized Exception");
+      : super("Unauthorized", message);
 }
