@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mvvm_bloc/repository/auth/login_repository.dart';
 import 'package:flutter_mvvm_bloc/utils/routes/routes.dart';
 import 'package:flutter_mvvm_bloc/utils/routes/routes_name.dart';
+import 'package:get_it/get_it.dart';
 
+
+GetIt  getIt = GetIt.instance();
 void main() {
+  serviceLocator();
   runApp(const MyApp());
 }
 
@@ -28,4 +33,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // Optionally hide the debug banner
     );
   }
+}
+
+void serviceLocator(){
+getIt.registerLazySingleton(() => LoginRepository());
 }
