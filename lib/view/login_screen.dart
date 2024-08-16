@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mvvm_bloc/data/status.dart';
 import 'package:flutter_mvvm_bloc/main.dart';
-import 'package:flutter_mvvm_bloc/repository/auth/login_repository.dart';
 import 'package:flutter_mvvm_bloc/view/view_widgets/email_input_field_widget.dart';
 import 'package:flutter_mvvm_bloc/view/view_widgets/password_input_field_widget.dart';
 import 'package:flutter_mvvm_bloc/view_model/login_bloc/login_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 import '../res/strings/app_strings.dart';
 import '../res/widgets/spacing.dart';

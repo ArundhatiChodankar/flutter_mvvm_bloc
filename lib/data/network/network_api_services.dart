@@ -51,7 +51,6 @@ class NetworkApiServices extends BaseApiServices {
   }
 
   dynamic _handleResponse(Response<dynamic> response) {
-    print('Response status code: ${response.statusCode}');
     switch (response.statusCode) {
       case 200:
         return response.data;
@@ -69,8 +68,6 @@ class NetworkApiServices extends BaseApiServices {
   dynamic _handleDioError(DioException e) {
     if (e.response != null) {
       // Handle specific status codes if necessary
-      print('Dio error response: ${e.response?.statusCode} ${e.response?.statusMessage}');
-      print('Dio error data: ${e.response?.data}');
       switch (e.response?.statusCode) {
         case 400:
           return e.response?.data;
@@ -84,7 +81,6 @@ class NetworkApiServices extends BaseApiServices {
       }
     } else {
       // Handle errors without response (e.g., network issues)
-      print('Dio error message: ${e.message}');
       throw InternetException('An unknown error occurred');
     }
   }
