@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_mvvm_bloc/model/user_model.dart';
 import 'package:flutter_mvvm_bloc/services/storage/local_storage.dart';
 
 class SessionController {
@@ -9,6 +10,9 @@ class SessionController {
 
   // Local storage instance
   final LocalStorage localStorage = LocalStorage();
+
+  // User model instance
+   UserModel _userModel = UserModel();
 
   // Login status
   bool? isLogin;
@@ -31,7 +35,8 @@ class SessionController {
   Future<void> getUserFromPreference() async {
     var userData = await localStorage.getValue("token");
     var isLogin = await localStorage.getValue("isLogin");
-    if (userData.isNotEmpty) {
+    if (userData.toString().isNotEmpty) {
+      SessionController()._userModel = UserModel.fromJson(jsonDecode(userData));
     }
     SessionController().isLogin = isLogin == "true" ? true : false;
   }
