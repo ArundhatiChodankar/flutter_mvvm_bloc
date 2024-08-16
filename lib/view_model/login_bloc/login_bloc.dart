@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_mvvm_bloc/data/status.dart';
 import 'package:flutter_mvvm_bloc/repository/auth/login_repository.dart';
+import 'package:flutter_mvvm_bloc/services/session_manager/session_controller.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -38,6 +39,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           emit(state.copyWith(
               status: PostStatus.error, message: value.error.toString()));
         } else {
+          await SessionController().saveUserInPreference(value);
+          await SessionController().getUserFromPreference();
           emit(state.copyWith(
               status: PostStatus.success, message: 'Login Successful'));
         }

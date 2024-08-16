@@ -24,10 +24,10 @@ class LoginScreen extends StatelessWidget {
         listener: (context, state) {
           switch (state.status) {
             case PostStatus.loading:
-              Utils.toastMessage("Please wait");
               break;
             case PostStatus.success:
               Utils.toastMessage(state.message.toString());
+              Navigator.pushNamedAndRemoveUntil(context, RouteNames.home, (route) => false);
               break;
             case PostStatus.error:
               Utils.toastMessage(state.message.toString());
